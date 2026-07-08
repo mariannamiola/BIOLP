@@ -1,0 +1,53 @@
+## Configuration for the synthetic demo dataset (see demo/README.md).
+## Points the pipeline at demo/data instead of the real data/ folder, and uses
+## a dedicated GRASS location so it never touches a real project's database.
+
+paths:
+  data_dir: demo/data
+
+grass:
+  db: grassdata_demo
+  loc: biolp_demo
+  mapset: PERMANENT
+  bin: "/Applications/GRASS-8.5.app/Contents/Resources/bin/grass" ##full path to the grass executable; leave empty to auto-detect via `which grass`
+
+dtm:
+  path: in
+  name: dtm_demo
+  ext: tif
+  res: 10
+  set_clip: False ##the synthetic DTM is already a single closed watershed (ridges on 3 sides, one outlet); no mask needed
+  mask: ""
+
+hsg: ##HYDROLOGIC SOIL GROUP
+  dir: in
+  name: hsg_demo
+  ext: gpkg
+  layer: hsg_demo
+  field: gi
+  field_label: b_
+
+corine:
+  enabled: False ##single synthetic land-cover file, see corine.single_file
+  dir: in/MappeCORINE
+  pattern: clc*.shp
+  single_file: in/clc_demo.gpkg
+  field: ucs
+  field_label: a_
+
+computecn:
+  clc_hsg: hsg_CLC_overlay
+  lookuptable: CLC_HC_CN_descr.csv
+  enabled_hc: True
+  set_hc: Fair
+  hsg_missing_policy: nearest ##original / weighted / fixed / nearest
+  fixed_hsg: D
+
+landplaner:
+  enabled: False ##the private LANDPLANER script isn't included in this repo -- see docs/MANUAL.md. Set to True only if you've placed your own copy in external/
+  version: LANDPLANER_v34_20250708_nokmisc_r4xx
+  out_dir: synth_noroot
+
+muse:
+  enabled: False ##MUSE is a separate, private tool -- not part of this demo
+  cn_raster: ""

@@ -1,0 +1,16 @@
+CLC;CLC_LEV3_NAME;CLC_LEV2_NAME;HC;CN_HSG_A_VALUE;CN_HSG_B_VALUE;CN_HSG_C_VALUE;CN_HSG_D_VALUE
+112;Discontinuous urban fabric;Urban fabric;Poor;77;85;90;92
+112;Discontinuous urban fabric;Urban fabric;Fair;61;75;83;87
+112;Discontinuous urban fabric;Urban fabric;Good;51;68;79;84
+211;Non-irrigated arable land;Arable land;Poor;72;81;88;91
+211;Non-irrigated arable land;Arable land;Fair;67;78;85;89
+211;Non-irrigated arable land;Arable land;Good;62;71;78;81
+231;Pastures;Grassland;Poor;68;79;86;89
+231;Pastures;Grassland;Fair;49;69;79;84
+231;Pastures;Grassland;Good;39;61;74;80
+311;Broad-leaved forest;Forest;Poor;45;66;77;83
+311;Broad-leaved forest;Forest;Fair;36;60;73;79
+311;Broad-leaved forest;Forest;Good;30;55;70;77
+312;Coniferous forest;Forest;Poor;45;66;77;83
+312;Coniferous forest;Forest;Fair;35;56;70;77
+312;Coniferous forest;Forest;Good;25;46;64;73
