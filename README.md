@@ -20,7 +20,7 @@ git clone https://github.com/mariannamiola/BIOLP.git
 
 
 ## Requirements
-- **GRASS GIS** ≥ 8.x, with the [`grass`](https://grass.osgeo.org/download/) executable available on `PATH` (or pointed to via `grass.bin` in `config.yml`) ;
+- **GRASS GIS** ≥ 7.8, with the [`grass`](https://grass.osgeo.org/download/) executable available on `PATH` (or pointed to via `grass.bin` in `config.yml`) ;
 - **Python** ≥ 3.9 with the packages in `requirements.txt`:
   ```
   pip install -r requirements.txt
@@ -32,7 +32,7 @@ The pipeline is orchestrated by `src/main.py`, which in turn calls the GRASS sub
 
 ```bash
 cd src
-python3 main.py --config ../demo/config-demo.yml --step all
+python3 main.py --config ../demo/config_demo.yml --step all
 ```
 
 `--step` lets you (re-)run a single stage instead of the whole pipeline:
@@ -121,6 +121,8 @@ Each run creates a folder under `out/<loc>_<res>[_<suffix>]/` (one per CLC file/
 - `hsg_CLC_overlay.csv`, `hsg_CLC_overlay_out.gpkg`: HSG-CLC vector overlay and its attribute table;
 - `CN_min.csv`, `CN.csv`, `CN_max.csv` and the corresponding `hsg_CLC_overlay_CN_*.asc` rasters: the three CN variants (min/mean/max, from the lookup table);
 - `landplaner.out_dir` as configured: LANDPLANER's own output, one subfolder per CN variant, if the `landplaner` step was run.
+
+All raster outputs are saved in Esri ASCII Grid format (`.asc`) by default.
 
 Log files for each run of `main.py` are written to `logs/` at the repository root.
 
