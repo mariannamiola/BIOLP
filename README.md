@@ -18,23 +18,6 @@ See **[docs/MANUAL.md](docs/MANUAL.md)** for the full user manual: a detailed `c
 git clone https://github.com/mariannamiola/BIOLP.git
 ```
 
-## Repository content
-```
-BIOLP/
-├── src/
-│   ├── main.py          # orchestrator: runs the whole pipeline end-to-end
-│   ├── 1_vimport.py      # GRASS: import DTM/HSG/CLC, terrain derivatives, HSG-CLC overlay
-│   ├── 2_HSGtoCN.py      # compute Curve Number (mean/max/min) per HSG-CLC polygon
-│   └── 3_CNmap.py        # GRASS: join CN values back to the vector overlay and rasterize
-├── data/                 # geospatial inputs (not versioned, see "Data" below)
-├── demo/                 # small synthetic dataset + config to try the pipeline in minutes
-├── external/             # external dependencies (LANDPLANER)
-├── validation/           # accuracy assessment of the stochastic simulation (results replicability)
-├── out/                  # pipeline outputs, created at runtime (including one folder per run)
-├── config.yml            # single configuration file driving the whole run
-├── docs/MANUAL.md        # full user manual
-└── requirements.txt
-```
 
 ## Requirements
 - **GRASS GIS** ≥ 8.x, with the [`grass`](https://grass.osgeo.org/download/) executable available on `PATH` (or pointed to via `grass.bin` in `config.yml`) ;
@@ -49,7 +32,7 @@ The pipeline is orchestrated by `src/main.py`, which in turn calls the GRASS sub
 
 ```bash
 cd src
-python3 main.py --config ../config.yml --step all
+python3 main.py --config ../demo/config-demo.yml --step all
 ```
 
 `--step` lets you (re-)run a single stage instead of the whole pipeline:
@@ -69,6 +52,24 @@ Notes:
 
 ## Quick demo
 To check the pipeline runs, `demo/` provides a small, fully synthetic dataset (tiny DTM, HSG/land-cover grids, CN lookup table) that runs the deterministic CN steps end-to-end in less than a minute, without the need of real regional data or the private LANDPLANER/MUSE code (GRASS GIS is still required). See [`demo/README.md`](demo/README.md).
+
+## Repository content
+```
+BIOLP/
+├── src/
+│   ├── main.py           # orchestrator: runs the whole pipeline end-to-end
+│   ├── 1_vimport.py      # GRASS: import DTM/HSG/CLC, terrain derivatives, HSG-CLC overlay
+│   ├── 2_HSGtoCN.py      # compute Curve Number (mean/max/min) per HSG-CLC polygon
+│   └── 3_CNmap.py        # GRASS: join CN values back to the vector overlay and rasterize
+├── data/                 # geospatial inputs (not versioned, see "Data" below)
+├── demo/                 # small synthetic dataset + config to try the pipeline in minutes
+├── external/             # external dependencies (LANDPLANER)
+├── validation/           # accuracy assessment of the stochastic simulation (results replicability)
+├── out/                  # pipeline outputs, created at runtime (including one folder per run)
+├── config.yml            # single configuration file driving the whole run
+├── docs/MANUAL.md        # full user manual
+└── requirements.txt
+```
 
 ## Data
 To use with real data, place them in a `data/` folder at the repository root (next to this README).
