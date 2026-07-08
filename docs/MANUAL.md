@@ -124,76 +124,12 @@ See the README's [Outputs](../README.md#outputs) section for the full output fol
 
 LANDPLANER (M. Rossi, 2014) is **not distributed in this repository**. `src/main.py` only *calls* it, as an external dependency expected to be placed by the user in `external/<landplaner.version>.r`, with `Rscript` on `PATH`. If you would like access to LANDPLANER for research purposes, please contact the corresponding author (see the README's [Contributor](../README.md#contributor) section).
 
-To let someone with their own copy of LANDPLANER plug it in, this is the exact command-line interface `main.py` expects from it (see `src/main.py`, `--step landplaner`):
-
-```bash
-Rscript <landplaner.version>.r --args \
-  -wd <output folder> \
-  -dem <dtm name>.asc \
-  -slope slope.asc \
-  -acc accumulation.asc \
-  -drain drainage_abs.asc \
-  -cn <computecn.clc_hsg>_<CN variant>.asc \
-  -ba basin.asc \
-  -outfolder <landplaner.out_dir>_<CN variant>
-```
-where `<CN variant>` is each of `CN_min`, `CN`, `CN_max` in turn, and every `.asc` file referenced above is produced by `1_vimport.py`/`3_CNmap.py` in the same output folder. Anyone holding a separate copy of LANDPLANER only needs a script that accepts these arguments to slot into this pipeline unmodified.
 
 ## 6. Interfacing with MUSE (private — available on request)
 
 MUSE is a stochastic, vegetation-based tool that produces hydrologically-conditioned CN maps as an alternative (or complement) to the deterministic SCS-CN branch implemented in `src/`. It is **not distributed in this repository**; for methodological details and results, please refer to:
 
-- **Thesis**: [Cognome, Titolo della tesi, Anno, Ateneo] — *placeholder, to be completed*
-- **Poster**: [Titolo del poster, Conferenza/Venue, Anno, link] — *placeholder, to be completed*
+- **PhD Thesis**: M. Miola (2025), Increase the knowledge of Natural Systems through the evaluation of the uncertainty of environmental data: operational theory and application
+- **Poster**: M. Miola et al. (2022), MUSE: Modeling Uncertainty as a Support for Environment (https://doi.org/10.2312/stag.20221265)
 
 If you would like access to the MUSE code for research purposes, please contact the corresponding author (see the README's [Contributor](../README.md#contributor) section).
-
-MUSE-derived CN rasters are meant to be fed into the same LANDPLANER step described in §5, alongside the deterministic `CN_min`/`CN`/`CN_max` rasters produced by this pipeline — LANDPLANER's interface does not distinguish between the two sources. `main.py` provides an explicit hook for this: set `muse.enabled: True` and `muse.cn_raster` (see §3) to the path of a MUSE-produced CN raster, and the `landplaner` step will run LANDPLANER once more using it, writing its output to `<landplaner.out_dir>_MUSE`. This only runs if `landplaner.enabled: True` as well — a MUSE CN raster still needs LANDPLANER itself to turn it into an erosion estimate.
-
-## 7. Validating the stochastic vegetation simulation (`validation/`)
-
-`validation/` contains the accuracy assessment of MUSE's simulated vegetation classification against an independent ground-truth vegetation map. This validates MUSE's stochastic vegetation output specifically — it is independent of, and not required to reproduce, the deterministic CN/erosion pipeline in `src/`.
-
-> **Status**: `validation/vegetation_accuracy_assessment.py` is a working version, still being refined.
-
-### Purpose
-MUSE simulates vegetation classes from a set of sample points; this script quantifies how well the simulated map reproduces an independently mapped ground truth, and how sensitive the result is to the **sampling design** used to condition the simulation. Three configurations are compared:
-
-| Configuration | Description |
-|---|---|
-| `Random` | Sample points placed at random locations |
-| `Grid 100x100` | Regular grid, 100 m spacing |
-| `Grid 200x200` | Regular grid, 200 m spacing |
-
-Sample-point layouts and pre-computed example outputs are not shipped in this
-repository (ground truth and MUSE simulation output are private); running the
-script against your own data (see below) regenerates them.
-
-### Requirements
-```bash
-pip install geopandas pandas numpy scipy scikit-learn matplotlib seaborn
-```
-
-### Expected inputs
-The script (edit the `CONFIGURATION` block at the top of the file to point at your own data):
-
-- **Ground truth** (`GROUND_TRUTH_PATH`, default `data/ground_truth_clip.gpkg`): any vector format readable by `geopandas`, with a geometry column and a string class column (`GT_CLASS_COLUMN`, default `vege`).
-- **Simulation output**, one CSV per sampling configuration (`CONFIGS`, default `results_sis/sis_random.csv`, `sis_grid100.csv`, `sis_grid200.csv`): columns `x`, `y`, `best_guess` (integer class code) and one probability column per class (`PROB_COLS`, e.g. `pdf_cat1` … `pdf_cat9`), as produced by MUSE.
-- **Class map** (`CLASS_MAP`): integer → string label, must match the ground truth's class labels. The nine classes currently configured are: `castanea`, `altre latifoglie`, `macchia a leccio`, `macchia a sughera`, `bosco misto di pino e castagno`, `pineta`, `formazione di pino post incendio`, `formazioni di macchia post incendio`, `agricolo / altre superf. non boscate`.
-
-Both `data/` and `results_sis/` are expected as subfolders of `validation/` (i.e. `validation/data/ground_truth_clip.gpkg`, `validation/results_sis/sis_random.csv`, ...) unless you edit the paths to point elsewhere.
-
-### What it computes
-For each configuration, after spatially joining every simulated point to the ground-truth polygon it falls within:
-
-- **Overall Accuracy (OA)** and **Cohen's Kappa** (`sklearn.metrics.accuracy_score`, `cohen_kappa_score`);
-- **Per-class Producer's Accuracy** (recall), **User's Accuracy** (precision), **F1-score**, **Omission error** (`1 - recall`), **Commission error** (`1 - precision`) and support, via `sklearn.metrics.classification_report`;
-- a **normalised confusion matrix** heatmap (`confmat_<config>.png`);
-- a **Shannon-entropy uncertainty map** (bits) computed per point from its class-probability vector, as a spatial measure of classification confidence (`entropy_<config>.png`), together with diagnostics: the theoretical maximum entropy (`log2(n_classes)`), the correlation between entropy and the top predicted probability (expected negative), mean entropy grouped by correct/incorrect classification, and accuracy across entropy quintile bins (printed to console).
-
-### Outputs
-Running `python3 vegetation_accuracy_assessment.py` (from `validation/`) writes to `output_accuracy/`:
-- `summary_accuracy.csv` / `.tex` — OA and kappa per configuration;
-- `perclass_accuracy.csv` / `.tex` — producer's/user's accuracy, F1-score, omission/commission error, support per class per configuration;
-- `confmat_<config>.png` — normalised confusion matrix;
-- `entropy_<config>.png` — spatial uncertainty map.
