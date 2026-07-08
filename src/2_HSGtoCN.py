@@ -378,10 +378,10 @@ s = set()
 for item in error:
     s.add(tuple(item))
 
-np.savetxt(out_dir+'/cat_column.csv', array_cat, header='cat', fmt='%1.0f')
-np.savetxt(out_dir+'/CN_column.csv', array_cn, header='CN', fmt='%1.2f')
-np.savetxt(out_dir+'/CN_max_column.csv', array_cn_max, header='CN', fmt='%1.2f')
-np.savetxt(out_dir+'/CN_min_column.csv', array_cn_min, header='CN', fmt='%1.2f')
+np.savetxt(out_dir+'/cat_column.csv', array_cat, header='cat', comments='', fmt='%1.0f')
+np.savetxt(out_dir+'/CN_column.csv', array_cn, header='CN', comments='', fmt='%1.2f')
+np.savetxt(out_dir+'/CN_max_column.csv', array_cn_max, header='CN', comments='', fmt='%1.2f')
+np.savetxt(out_dir+'/CN_min_column.csv', array_cn_min, header='CN', comments='', fmt='%1.2f')
 
 print('=== Saving CN_avg ... COMPLETED.')
 print('=== Saving CN_max ... COMPLETED.')
