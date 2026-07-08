@@ -64,11 +64,16 @@ def main():
     cn_basename=os.path.splitext(cn_filename)[0]
 
     gs.run_command('db.in.ogr', input=cn_file, overwrite=True)
-        
+
     # Parameters definition
     map_name = sys.argv[9] ##"hsg_CLC_overlay"
     column_join = "cat"
     cn_table = cn_basename + "_csv"
+    ## db.in.ogr always adds its own auto-generated "cat" primary key to
+    ## imported tables; since our CSV already has a "cat" column (the real
+    ## polygon category, produced by combine_cat_cn() in main.py), it gets
+    ## renamed to "cat_" to avoid the clash -- that's the one to join on.
+    other_column_join = "cat_"
     raster_out=map_name+'_out'
     cn_column_text = "CN"
     cn_column_numeric = "x_CN_numeric"
@@ -82,7 +87,7 @@ def main():
     print("=== Joining table to map database ...")
     print("=== Map: ", map_name)
     print("=== Table: ", cn_table)
-    gs.run_command('v.db.join', map=map_name, column=column_join, other_table=cn_table, other_column=column_join, overwrite=True)
+    gs.run_command('v.db.join', map=map_name, column=column_join, other_table=cn_table, other_column=other_column_join, overwrite=True)
     
     describe_output = gs.parse_command('db.describe', table=map_name)
     print("=== Database description ...")
