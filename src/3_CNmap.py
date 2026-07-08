@@ -3,7 +3,6 @@
 import os
 import sys
 import grass.script as gs
-import grass.script.setup as gsetup
 
 def parse_bool(x):
     if isinstance(x, bool):
@@ -30,18 +29,13 @@ def main():
 # init GRASS GIS
 # ----------------------------------------------------------------
 
-    dir = sys.argv[1]
-    gisdb = dir + "/" + sys.argv[2]     # Cartella del database
-    location = sys.argv[3]              # Nome della location
-    mapset = sys.argv[4]                # Nome del mapset
-
-    os.environ["GISDBASE"] = gisdb
-    os.environ["LOCATION_NAME"] = location
-    os.environ["MAPSET"] = mapset
-
-    grass_configpath = sys.argv[5]
-    sys.path.append(grass_configpath)
-    gsetup.init(gisdb, location, mapset)
+    ## This script is launched via `grass <mapset_path> -f --exec python3 ...`,
+    ## which already starts a fully initialized GRASS session (GISDBASE,
+    ## LOCATION_NAME, MAPSET and GISRC are set by the enclosing `grass` call) --
+    ## no gsetup.init() is needed (or wanted: gsetup.init() takes
+    ## (gisbase, dbase, location, mapset), and calling it with 3 args here
+    ## silently shifted them, overwriting the correct session's GISRC with a
+    ## bogus one and breaking r.import with "LOCATION not available").
 
 # ----------------------------------------------------------------
 # setup directories

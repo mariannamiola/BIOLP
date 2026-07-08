@@ -9,7 +9,7 @@ grass:
   db: grassdata_demo
   loc: biolp_demo
   mapset: PERMANENT
-  bin: "/Applications/GRASS-8.5.app/Contents/Resources/bin/grass" ##full path to the grass executable; leave empty to auto-detect via `which grass`
+  bin: "" ##full path to the grass executable; leave empty to auto-detect via `which grass`
 
 dtm:
   path: in
