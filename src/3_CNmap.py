@@ -70,7 +70,7 @@ def main():
     column_join = "cat"
     cn_table = cn_basename + "_csv"
     raster_out=map_name+'_out'
-    cn_column_text = "x_CN"
+    cn_column_text = "CN"
     cn_column_numeric = "x_CN_numeric"
                              
     sql_addcolumn="ALTER TABLE "+cn_table+" ADD COLUMN "+cn_column_numeric+" double precision"
