@@ -385,6 +385,55 @@ if MUSE_ENABLED and MUSE_CN_RASTER:
     MUSE_CN_RASTER = str((DATA_DIR / MUSE_CN_RASTER).resolve())
 
 
+## Output folders produced by this run, filled in as each scenario (per CLC
+## file/date, or per UCS field) completes -- used for the results recap
+## printed at the end of the script.
+RESULT_DIRS = []
+
+
+def print_results_recap(result_dirs):
+    """Summarize where this run's outputs landed, so the user doesn't have
+    to go hunting through out/ to find the maps/tables produced."""
+    print()
+    print("=============================================================")
+    print("=== RESULTS")
+    print("=============================================================")
+    if not result_dirs:
+        print("No output folder was produced in this run.")
+        print("=============================================================")
+        print()
+        return
+
+    for label, out_path in result_dirs:
+        out_path = Path(out_path)
+        print(f"--- {label}")
+        print(f"    {out_path}")
+        if not out_path.exists():
+            print("    (folder not found)")
+            continue
+
+        asc_files = sorted(p.name for p in out_path.glob('*.asc'))
+        csv_files = sorted(p.name for p in out_path.glob('*.csv'))
+        gpkg_files = sorted(p.name for p in out_path.glob('*.gpkg'))
+        landplaner_dirs = sorted(
+            p.name for p in out_path.iterdir() if p.is_dir() and p.name.startswith(RES_DIR_NAME)
+        )
+
+        if asc_files:
+            print("    Raster maps (terrain + Curve Number): " + ", ".join(asc_files))
+        if csv_files:
+            print("    Tables: " + ", ".join(csv_files))
+        if gpkg_files:
+            print("    Vector files: " + ", ".join(gpkg_files))
+        if landplaner_dirs:
+            print("    LANDPLANER results: " + ", ".join(landplaner_dirs))
+        print()
+
+    print("To inspect the results, open the folders listed above (under out/).")
+    print("=============================================================")
+    print()
+
+
 if CORINE:
     logging.info("Reading Corine Land Cover ...")
 
@@ -480,6 +529,8 @@ if CORINE:
         # Run R script LANDPLANER
         if step_to_run in ["all", "landplaner"]:
             run_landplaner_step(current_out_dir, dem_prefix="")
+
+        RESULT_DIRS.append((f"Land cover: {suffix}", current_out_dir))
 
 else:
     print("=== Specific file for Land Use/Cover ...")
@@ -589,9 +640,12 @@ else:
             run_landplaner_step(UCS_DIR, dem_prefix="../")
             print()
 
+        RESULT_DIRS.append((f"UCS field: {UCS_FIELD}", UCS_DIR))
+
 
 logging.info("=== Script ended")
 
+print_results_recap(RESULT_DIRS)
 
 print()
 print("=============================================================")
