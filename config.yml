@@ -1,0 +1,49 @@
+paths:
+  data_dir: data ##folder with the input data, relative to the repo root (e.g. "demo/data" to run the synthetic demo)
+
+grass:
+  db: grassdata
+  loc: mp_test
+  mapset: PERMANENT
+  bin: "" ##full path to the grass executable; leave empty to auto-detect via `which grass`
+
+dtm:
+  path: in
+  name: dtm #da inserire in data folder
+  ext: tif
+  res: 10
+  set_clip: True
+  mask: maschera.shp
+  
+hsg: ##HYDROLOGIC SOIL GROUP
+  dir: in
+  name: dbpedologico_filt_clipb300 ##database pedologico USDA
+  ext: gpkg
+  layer: db_filtered ##databaseusda__gruppo_idrologico_usda
+  field: gi
+  field_label: b_ ##b_gi
+  
+corine:
+  enabled: False ##abilita la lettura di più mappe clc da cartella "dir" e nome "pattern"; false considera invece il single_file
+  dir: in/MappeCORINE #da inserire in data folder
+  pattern: clc*.shp
+  single_file: in/CLC_OpenToscana/UCS2007-2019_filt-clipb300.shp  # lascia vuoto se non usi
+  field: ucs
+  field_label: a_ ##b_  ##O a_ oppure a_clc
+  
+computecn:
+  clc_hsg: hsg_CLC_overlay
+  lookuptable: CLC_HC_CN_descr.csv #"IIICLC_CN_light.csv" #da inserire in data folder
+  enabled_hc: True ##abilita il filtro su hydrologic condition
+  set_hc: Fair
+  hsg_missing_policy: nearest ##original / weighted / fixed / nearest
+  fixed_hsg: D ##se missing_policy = fixed
+  
+landplaner:
+  enabled: True ##set to False to skip the landplaner step entirely (e.g. if you don't have the private script in external/)
+  version: LANDPLANER_v34_20250708_nokmisc_r4xx
+  out_dir: synth_noroot
+
+muse:
+  enabled: False ##MUSE runs separately (not from this script); set to True to also feed its CN raster into the landplaner step
+  cn_raster: "" ##path to a MUSE-derived CN raster (.asc), relative to paths.data_dir or absolute; used as an extra LANDPLANER run alongside CN_min/CN/CN_max

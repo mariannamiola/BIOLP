@@ -1,0 +1,4 @@
+PyYAML>=6.0
+pandas>=1.5
+numpy>=1.23
+termcolor>=2.0
