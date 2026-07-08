@@ -59,6 +59,24 @@ with open(config_path) as f:
 
 
 # ============================================================
+# CHECK GRASS GIS PRESENCE (block immediately if missing)
+# ============================================================
+## Use the path from config.yml (grass.bin) if provided, otherwise auto-detect via PATH
+GRASS_BIN = CONFIG.get("grass", {}).get("bin") or shutil.which("grass") or ""
+if not GRASS_BIN:
+    print()
+    print("=============================================================")
+    print("=== ERROR: GRASS GIS not found.")
+    print("=== This pipeline requires GRASS GIS to run.")
+    print("=== Install it and make sure 'grass' is on your PATH, or set")
+    print("=== 'grass.bin' in config.yml to its full executable path.")
+    print("=== Download GRASS GIS: https://grass.osgeo.org/download/")
+    print("=============================================================")
+    print()
+    sys.exit(1)
+
+
+# ============================================================
 # GLOBAL CONSTANTS (from config)
 # ============================================================
 SCRIPT_DIR = Path(__file__).resolve().parent  ##cartella dove sta il main.py (src/)
@@ -197,13 +215,6 @@ def run_landplaner_step(wd, dem_prefix):
 
 
 ## GRASS setup: location
-## Use the path from config.yml (grass.bin) if provided, otherwise auto-detect via `which grass`
-GRASS_BIN = CONFIG.get("grass", {}).get("bin") or ""
-if not GRASS_BIN:
-    GRASS_BIN = subprocess.run(['which', 'grass'], capture_output=True, text=True).stdout.strip()
-if not GRASS_BIN:
-    raise RuntimeError("GRASS executable not found. Set 'grass.bin' in config.yml or make sure 'grass' is on your PATH.")
-
 logging.info(f"=== GRASS bin location: {GRASS_BIN}")
 
 
