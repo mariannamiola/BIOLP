@@ -300,7 +300,7 @@ def main():
     print()
     print('\033[1;32m=== Extracting vector database ...\033[0m')
     hsg_CLC_out=out_dir+'/'+clc_hsg+'.csv'
-    gs.run_command('v.db.select', map=clc_hsg, format='csv', file=hsg_CLC_out, overwrite=True)
+    gs.run_command('v.db.select', map=clc_hsg, separator='comma', file=hsg_CLC_out, overwrite=True)
     print(f"=== Saved vector database: {hsg_CLC_out}")
 
 
